@@ -1,26 +1,32 @@
 :root {
-  --font-sans: 'LXGW WenKai', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Font system shared with ../rss-reader */
+  --font-ui: 'DM Sans', -apple-system, sans-serif;
+  --font-serif: 'Noto Serif SC', 'Georgia', serif;
+  --font-mono: 'SF Mono', 'Fira Mono', ui-monospace, monospace;
 
-  --color-bg: #ffffff;
-  --color-text: #1a1a1a;
-  --color-muted: #666;
-  --color-accent: #0066cc;
-  --color-border: #e5e5e5;
-  --color-code-bg: #f6f8fa;
+  /* Color palette adopted from ../rss-reader (warm stone + teal accent). */
+  --color-bg: #f5f2ee;
+  --color-text: #1c1917;
+  --color-muted: #78716c;
+  --color-accent: #2b5c5c;
+  --color-border: #c8c3bc;
+  --color-code-bg: #eeeae4;
+  --color-selection: #d9d3cb;
 
-  --max-width: 680px;
+  --max-width: 700px;
   --spacing: 1.6rem;
 }
 
+/* rss-reader is light-only; this dark variant keeps the same stone/teal family. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #14171a;
-    --color-text: #e6e6e6;
-    --color-muted: #9aa0a6;
-    --color-accent: #5aa9ff;
-    --color-border: #2a2f35;
-    --color-code-bg: #1c2127;
+    --color-bg: #1c1917;
+    --color-text: #ece7df;
+    --color-muted: #a8a097;
+    --color-accent: #6aabab; /* lighter teal, readable on dark */
+    --color-border: #38332e;
+    --color-code-bg: #262220;
+    --color-selection: #2f4a4a;
   }
 }
 
@@ -34,11 +40,16 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+::selection {
+  background: var(--color-selection);
+}
+
 body {
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: 1.05rem;
-  line-height: 1.75;
+  font-family: var(--font-ui);
+  font-size: 1.0625rem;
+  line-height: 1.85; /* CJK reads better with extra leading */
+  letter-spacing: 0.01em;
   color: var(--color-text);
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
@@ -48,43 +59,66 @@ body {
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--spacing);
+  padding: calc(var(--spacing) * 2) var(--spacing);
 }
 
 a {
   color: var(--color-accent);
   text-decoration: none;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
 a:hover {
   text-decoration: underline;
 }
 
+/* --- Header / footer --- */
 .site-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: calc(var(--spacing) * 1.5);
+  margin-bottom: calc(var(--spacing) * 2);
 }
 
 .site-header .brand {
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
   color: var(--color-text);
+}
+
+.site-header .brand:hover {
+  color: var(--color-accent);
+  text-decoration: none;
 }
 
 .site-header nav a {
   color: var(--color-muted);
-  margin-left: 1rem;
+  margin-left: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.site-header nav a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
 }
 
 .site-footer {
-  margin-top: calc(var(--spacing) * 2);
+  margin-top: calc(var(--spacing) * 2.5);
   padding-top: var(--spacing);
   border-top: 1px solid var(--color-border);
   color: var(--color-muted);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+}
+
+/* --- Headings --- */
+h1,
+h2,
+h3 {
+  line-height: 1.35;
+  text-wrap: balance;
 }
 
 /* --- Article list --- */
@@ -95,43 +129,82 @@ a:hover {
 }
 
 .post-list li {
-  padding: 1.1rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid var(--color-border);
 }
 
+.post-list li:first-child {
+  padding-top: 0;
+}
+
 .post-list h2 {
-  margin: 0 0 0.25rem;
-  font-size: 1.2rem;
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+}
+
+.post-list h2 a {
+  color: var(--color-text);
+}
+
+.post-list h2 a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
 }
 
 .post-meta {
   color: var(--color-muted);
   font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .post-desc {
-  margin: 0.35rem 0 0;
+  margin: 0.5rem 0 0;
   color: var(--color-muted);
 }
 
 /* --- Article body --- */
 article h1 {
-  font-size: 2rem;
+  font-family: var(--font-serif);
+  font-size: 2.15rem;
   line-height: 1.25;
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.5rem;
 }
 
-article time {
+article > time {
   color: var(--color-muted);
   font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .prose {
-  margin-top: var(--spacing);
+  font-family: var(--font-serif);
+  margin-top: calc(var(--spacing) * 1.5);
+  line-height: 1.9;
 }
 
 .prose h2 {
-  margin-top: 2rem;
+  margin-top: 2.25rem;
+  font-size: 1.5rem;
+}
+
+.prose h3 {
+  margin-top: 1.75rem;
+  font-size: 1.2rem;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  margin: 1.1rem 0;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: var(--color-border);
+}
+
+.prose a:hover {
+  text-decoration-color: var(--color-accent);
 }
 
 .prose img {
@@ -142,27 +215,36 @@ article time {
 
 .prose code {
   font-family: var(--font-mono);
-  font-size: 0.9em;
+  font-size: 0.875em;
   background: var(--color-code-bg);
-  padding: 0.15em 0.35em;
+  padding: 0.15em 0.4em;
   border-radius: 4px;
 }
 
 /* Shiki code blocks: <pre> already carries an inline background. */
 .prose pre {
-  padding: 1rem;
+  padding: 1rem 1.15rem;
   border-radius: 8px;
   overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .prose pre code {
   background: transparent;
   padding: 0;
+  font-size: inherit;
 }
 
 .prose blockquote {
-  margin: 1.2rem 0;
-  padding-left: 1rem;
-  border-left: 3px solid var(--color-border);
+  margin: 1.4rem 0;
+  padding: 0.2rem 0 0.2rem 1.1rem;
+  border-left: 3px solid var(--color-accent);
   color: var(--color-muted);
+}
+
+.prose hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
 }
