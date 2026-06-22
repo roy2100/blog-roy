@@ -1,0 +1,16 @@
+name = "blog-roy"
+compatibility_date = "2024-09-23"
+
+# Phase 1 is a fully static build; Cloudflare Pages serves ./dist directly.
+# No adapter is required until on-demand rendering (Phase 3) is enabled.
+pages_build_output_dir = "./dist"
+
+# --- Enable on demand (Phase 3) ---
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "blog"
+# database_id = "your-database-id"
+
+# [[r2_buckets]]
+# binding = "IMAGES"
+# bucket_name = "blog-images"

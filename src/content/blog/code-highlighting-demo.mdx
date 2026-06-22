@@ -1,0 +1,30 @@
+---
+title: 代码高亮与 MDX 演示
+date: 2026-06-21
+tags: [技术, Astro]
+description: 验证 Shiki 代码高亮与 MDX 组件内嵌能力。
+---
+
+Astro 内置 [Shiki](https://shiki.style)，无需额外配置即可获得高质量代码高亮。
+
+行内代码 `const x = 42` 也有样式。
+
+## TypeScript
+
+```ts
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const latest = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())[0];
+
+console.log(latest.data.title);
+```
+
+## Shell
+
+```bash
+npm install
+npm run dev
+```
+
+MDX 还允许在正文中直接使用表达式，例如当前年份是 {new Date().getFullYear()}。

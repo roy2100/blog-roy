@@ -1,0 +1,168 @@
+:root {
+  --font-sans: 'LXGW WenKai', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-muted: #666;
+  --color-accent: #0066cc;
+  --color-border: #e5e5e5;
+  --color-code-bg: #f6f8fa;
+
+  --max-width: 680px;
+  --spacing: 1.6rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #14171a;
+    --color-text: #e6e6e6;
+    --color-muted: #9aa0a6;
+    --color-accent: #5aa9ff;
+    --color-border: #2a2f35;
+    --color-code-bg: #1c2127;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: calc(var(--spacing) * 1.5);
+}
+
+.site-header .brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-text);
+}
+
+.site-header nav a {
+  color: var(--color-muted);
+  margin-left: 1rem;
+}
+
+.site-footer {
+  margin-top: calc(var(--spacing) * 2);
+  padding-top: var(--spacing);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+/* --- Article list --- */
+.post-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-list li {
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.post-list h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+}
+
+.post-meta {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.post-desc {
+  margin: 0.35rem 0 0;
+  color: var(--color-muted);
+}
+
+/* --- Article body --- */
+article h1 {
+  font-size: 2rem;
+  line-height: 1.25;
+  margin: 0 0 0.4rem;
+}
+
+article time {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.prose {
+  margin-top: var(--spacing);
+}
+
+.prose h2 {
+  margin-top: 2rem;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-code-bg);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+
+/* Shiki code blocks: <pre> already carries an inline background. */
+.prose pre {
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.prose blockquote {
+  margin: 1.2rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--color-border);
+  color: var(--color-muted);
+}
