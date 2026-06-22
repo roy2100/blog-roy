@@ -91,9 +91,13 @@ function checkFile(path) {
 function checkEnglish(lines, add) {
   lines.forEach((line, i) => {
     let m;
-    // Multiple spaces between words (leading indentation is ignored).
-    const multiSpace = /(?<=\S) {2,}(?=\S)/g;
-    while ((m = multiSpace.exec(line))) add(i, 'multiple spaces between words', line);
+    // Multiple spaces between words (leading indentation is ignored). Skip
+    // markdown table rows, where runs of spaces are column alignment padding.
+    const isTableRow = (line.match(/\|/g) || []).length >= 2;
+    if (!isTableRow) {
+      const multiSpace = /(?<=\S) {2,}(?=\S)/g;
+      while ((m = multiSpace.exec(line))) add(i, 'multiple spaces between words', line);
+    }
     // A space before terminal/clause punctuation.
     const spaceBefore = /\s([,.;:!?])/g;
     while ((m = spaceBefore.exec(line))) add(i, `space before "${m[1]}"`, line);

@@ -1,6 +1,7 @@
 ---
 title: Programming Setup
 date: 2024-09-23
+lang: zh
 description: 我的开发环境清单——命令行工具、UI 应用、VSCode 与 Chrome 插件，以及常用工具网站。
 ---
 
