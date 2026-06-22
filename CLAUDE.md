@@ -8,10 +8,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev      # dev server at http://localhost:4321
 npm run build    # static build → ./dist
 npm run preview  # serve the built ./dist locally
-npm run check    # astro check — type/diagnostics across .astro/.ts files (use as the lint/test gate)
+npm run check    # astro check (types) + check:punct — the lint/test gate
+npm run check:punct  # lint Chinese quotation marks in posts (GB/T 15834)
 ```
 
-There is no unit-test suite. `npm run check` is the correctness gate; it must report 0 errors before a change is considered done.
+There is no unit-test suite. `npm run check` is the correctness gate; it must report 0 errors before a change is considered done. It runs `astro check` (type/diagnostics across `.astro`/`.ts`) followed by `scripts/check-punctuation.mjs`, which enforces Simplified Chinese quotation norms across `src/content/blog/**`: outermost quotes must be full-width `“ ”`, single `‘ ’` only nested inside doubles, and no straight `"` adjacent to CJK text (code fences and inline code are exempt).
 
 ## Architecture
 
