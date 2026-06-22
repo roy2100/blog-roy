@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 // Lint Simplified-Chinese typography in blog posts against the GB/T 15834 norm.
 //
-// Posts with frontmatter `lang: en` are skipped entirely — the rules below are
-// Chinese-specific. For Chinese posts the linter checks:
+// Posts with frontmatter `lang: en` are checked against an English rule set
+// (multiple spaces, space before punctuation, missing space after a comma/
+// semicolon, spaces hugging parentheses, repeated punctuation).
+//
+// For Chinese posts (the default, `lang: zh`) the linter checks:
 //   1. Quotation marks: outermost use full-width “ ”, single ‘ ’ only nested
 //      inside doubles, no straight " adjacent to CJK, and balanced nesting.
 //   2. Half-width sentence punctuation ( , ; ! ? : . ) adjacent to CJK.
@@ -76,12 +79,38 @@ function strip(lines) {
 
 function checkFile(path) {
   const raw = readFileSync(path, 'utf8');
-  if (frontmatterLang(raw) === 'en') return []; // Chinese rules don't apply.
-
   const issues = [];
   const lines = strip(raw.split('\n'));
   const add = (i, msg, line) => issues.push({ line: i + 1, msg, ctx: line.trim() });
+  if (frontmatterLang(raw) === 'en') checkEnglish(lines, add);
+  else checkChinese(lines, add, issues);
+  return issues;
+}
 
+// English typography rules, applied to posts with `lang: en`.
+function checkEnglish(lines, add) {
+  lines.forEach((line, i) => {
+    let m;
+    // Multiple spaces between words (leading indentation is ignored).
+    const multiSpace = /(?<=\S) {2,}(?=\S)/g;
+    while ((m = multiSpace.exec(line))) add(i, 'multiple spaces between words', line);
+    // A space before terminal/clause punctuation.
+    const spaceBefore = /\s([,.;:!?])/g;
+    while ((m = spaceBefore.exec(line))) add(i, `space before "${m[1]}"`, line);
+    // Comma/semicolon immediately followed by a letter (missing space after).
+    const missingAfter = /([,;])[A-Za-z]/g;
+    while ((m = missingAfter.exec(line))) add(i, `missing space after "${m[1]}"`, line);
+    // A space hugging the inside of parentheses.
+    const spaceInParen = /\((?= )| (?=\))/g;
+    while ((m = spaceInParen.exec(line))) add(i, 'space just inside parentheses', line);
+    // Repeated punctuation ("..." stays a valid ellipsis; 4+ dots is not).
+    const repeated = /,{2,}|;{2,}|\.{4,}/g;
+    while ((m = repeated.exec(line))) add(i, `repeated punctuation "${m[0]}"`, line);
+  });
+}
+
+// Simplified-Chinese typography rules (GB/T 15834).
+function checkChinese(lines, add, issues) {
   lines.forEach((line, i) => {
     for (let c = 0; c < line.length; c++) {
       const ch = line[c];
@@ -171,8 +200,6 @@ function checkFile(path) {
   });
   for (const open of stack)
     issues.push({ line: open.line, msg: `unclosed ${open.ch}`, ctx: lines[open.line - 1].trim() });
-
-  return issues;
 }
 
 let total = 0;

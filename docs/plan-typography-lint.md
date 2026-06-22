@@ -58,3 +58,10 @@ Han-only adjacency (`isHan`). The 5 real issues were fixed in content:
 Deviation from plan: CJK↔Latin spacing was scoped to *letter-bearing* tokens, so
 pure numeric+unit (`2018年`) is intentionally left alone — discussed and confirmed.
 No autofix (linter only), no new dependencies.
+
+Follow-up: the original plan listed English typography rules as out of scope and
+skipped `lang: en` posts. Per a later request, `en` posts are now checked against
+an English rule set instead (multiple spaces, space before punctuation, missing
+space after a comma/semicolon, spaces hugging parentheses, repeated punctuation),
+verified with a throwaway `_`-prefixed fixture (Astro's loader ignores `_*` files;
+the linter still walks them).
