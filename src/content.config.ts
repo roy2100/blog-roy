@@ -10,6 +10,9 @@ const blog = defineCollection({
     tags: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
     description: z.string().optional(),
+    // Post language. Drives <html lang> and which typography rules the
+    // punctuation linter applies (Chinese rules are skipped for 'en').
+    lang: z.enum(['zh', 'en']).default('zh'),
   }),
 });
 

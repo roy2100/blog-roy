@@ -7,8 +7,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check && npm run check:punct",
-    "check:punct": "node scripts/check-punctuation.mjs",
+    "check": "astro check && npm run check:typography && npm test",
+    "check:typography": "node scripts/check-typography.mjs",
+    "test": "node --test scripts/*.test.mjs",
     "astro": "astro"
   },
   "dependencies": {
