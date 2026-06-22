@@ -29,6 +29,8 @@ Static personal blog built with **Astro 5**, deployed to **Cloudflare Pages**. `
 
 **Static output, no adapter (deliberate).** Phase 1 is fully static (`getStaticPaths`), so there is no `@astrojs/cloudflare` adapter; Cloudflare Pages serves `./dist` directly. The adapter is only needed when introducing on-demand rendering / D1 / R2 (Phase 3) — see commented bindings in `wrangler.toml`.
 
+**Deployment: Cloudflare Pages only (for now).** Deploy via the Pages Git integration — build command `npm run build`, output directory `dist`. `wrangler.toml` uses `pages_build_output_dir = "./dist"` accordingly. Do **not** switch this project to the Workers deploy flow (`npx wrangler deploy` + an `[assets]` block) unless explicitly asked — that path was evaluated and intentionally deferred. Revisit Workers only when Phase 3 dynamic features (SSR / D1 / R2) actually require it.
+
 **Site URL** lives in `astro.config.mjs` (`site: 'https://blog.royl.uk'`) and drives RSS + canonical URLs; `rss.xml.ts` repeats it as a fallback. Update both if the domain changes.
 
 **Styling** is intentionally plain native CSS in `src/styles/global.css` — CSS variables with light/dark via `prefers-color-scheme`. No Tailwind, by design (see `plan.md`). Code highlighting is Astro's built-in Shiki, configured in `astro.config.mjs` (`github-dark`); `.prose pre` relies on Shiki's inline background.
