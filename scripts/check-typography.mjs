@@ -25,7 +25,7 @@
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const BLOG_DIR = join(ROOT, 'src/content/blog');
@@ -90,8 +90,9 @@ function strip(lines) {
   });
 }
 
-function checkFile(path) {
-  const raw = readFileSync(path, 'utf8');
+// Pure entry point: lint a post's raw text, returning issues [{ line, msg, ctx }].
+// Kept free of file I/O so it can be unit-tested directly.
+export function checkContent(raw) {
   const issues = [];
   const rawLines = raw.split('\n');
   const lines = strip(rawLines);
@@ -101,6 +102,10 @@ function checkFile(path) {
   if (frontmatterLang(raw) === 'en') checkEnglish(lines, add);
   else checkChinese(lines, add);
   return issues;
+}
+
+function checkFile(path) {
+  return checkContent(readFileSync(path, 'utf8'));
 }
 
 // English typography rules, applied to posts with `lang: en`.
@@ -222,20 +227,27 @@ function checkChinese(lines, add) {
     add(open.line - 1, `unclosed ${open.ch}`);
 }
 
-let total = 0;
-for (const path of walk(BLOG_DIR).sort()) {
-  const issues = checkFile(path).sort((a, b) => a.line - b.line);
-  if (issues.length === 0) continue;
-  total += issues.length;
-  const rel = relative(ROOT, path);
-  for (const { line, msg, ctx } of issues) {
-    console.error(`${rel}:${line}  ${msg}`);
-    if (ctx) console.error(`    ${ctx}`);
+function main() {
+  let total = 0;
+  for (const path of walk(BLOG_DIR).sort()) {
+    const issues = checkFile(path).sort((a, b) => a.line - b.line);
+    if (issues.length === 0) continue;
+    total += issues.length;
+    const rel = relative(ROOT, path);
+    for (const { line, msg, ctx } of issues) {
+      console.error(`${rel}:${line}  ${msg}`);
+      if (ctx) console.error(`    ${ctx}`);
+    }
   }
+
+  if (total > 0) {
+    console.error(`\n✗ ${total} typography issue(s) found.`);
+    process.exit(1);
+  }
+  console.log('✓ Typography OK.');
 }
 
-if (total > 0) {
-  console.error(`\n✗ ${total} typography issue(s) found.`);
-  process.exit(1);
+// Run the CLI only when executed directly, not when imported by tests.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
 }
-console.log('✓ Typography OK.');

@@ -17,8 +17,9 @@ npm run dev      # http://localhost:4321
 | `npm run dev` | 启动本地开发服务器 |
 | `npm run build` | 生成静态站点到 `./dist` |
 | `npm run preview` | 本地预览构建产物 |
-| `npm run check` | 提交前的校验闸门：类型检查（astro check）+ 排版检查 |
+| `npm run check` | 提交前的校验闸门：类型检查（astro check）+ 排版检查 + 单测 |
 | `npm run check:typography` | 单独运行中英文排版检查 |
+| `npm test` | 运行排版检查器的单元测试（node:test，无第三方依赖） |
 
 ## 写文章
 
