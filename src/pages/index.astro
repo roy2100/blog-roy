@@ -25,11 +25,7 @@ const dateFmt = new Intl.DateTimeFormat('zh-CN', {
             <time datetime={post.data.date.toISOString()}>
               {dateFmt.format(post.data.date)}
             </time>
-            {post.data.tags && post.data.tags.length > 0 && (
-              <> · {post.data.tags.join(', ')}</>
-            )}
           </span>
-          {post.data.description && <p class="post-desc">{post.data.description}</p>}
         </li>
       ))
     }
