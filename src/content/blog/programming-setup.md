@@ -42,7 +42,7 @@ description: 我的开发环境清单——命令行工具、UI 应用、VSCode 
 
 ## Chrome 插件
 
-- FeHelper(前端助手)
+- FeHelper（前端助手）
 - LocatorJS
 - ModHeader - Modify HTTP headers
 - Outline All Elements

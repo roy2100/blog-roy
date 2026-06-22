@@ -4,16 +4,18 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  lang?: 'zh' | 'en';
 }
 
-const { title, description } = Astro.props;
+const { title, description, lang = 'zh' } = Astro.props;
+const htmlLang = lang === 'en' ? 'en' : 'zh-CN';
 const SITE_TITLE = "Roy's Blog";
 const fullTitle = title === SITE_TITLE ? title : `${title} · ${SITE_TITLE}`;
 const year = new Date().getFullYear();
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang={htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
