@@ -1,5 +1,5 @@
 ---
-title: 为什么人为了钱杀人呢
+title: 随笔
 date: 2004-09-01
 lang: zh
 tags: [随笔]
