@@ -56,10 +56,15 @@ function frontmatterLang(raw) {
   return lm ? lm[1] : 'zh';
 }
 
-// Blank the frontmatter block, fenced code blocks and inline code spans,
-// preserving line count and column positions so locations stay accurate.
+// Blank the frontmatter block, fenced code blocks (``` or ~~~), inline code
+// spans, and inline-link URLs ([text](url) keeps the prose text, blanks the
+// url) — preserving line count and character positions so adjacency checks stay
+// accurate. Blanked spans are filled with U+FFFC (not spaces) so the whitespace
+// rules don't mistake the padding for real spacing.
 function strip(lines) {
+  const BLANK = '\uFFFC';
   let inFence = false;
+  let fenceMark = ''; // ` or ~ — a fence only closes on its own marker
   let inFront = false;
   let frontDone = false;
   return lines.map((line, i) => {
@@ -71,19 +76,30 @@ function strip(lines) {
       }
       frontDone = true;
     }
-    if (/^\s*```/.test(line)) { inFence = !inFence; return ''; }
+    const fence = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fence) {
+      const mark = fence[1][0];
+      if (!inFence) { inFence = true; fenceMark = mark; }
+      else if (mark === fenceMark) { inFence = false; fenceMark = ''; }
+      return '';
+    }
     if (inFence) return '';
-    return line.replace(/`[^`]*`/g, (m) => ' '.repeat(m.length));
+    return line
+      .replace(/`[^`]*`/g, (m) => BLANK.repeat(m.length))
+      .replace(/(\]\()([^)]*)(\))/g, (_, open, url, close) => open + BLANK.repeat(url.length) + close);
   });
 }
 
 function checkFile(path) {
   const raw = readFileSync(path, 'utf8');
   const issues = [];
-  const lines = strip(raw.split('\n'));
-  const add = (i, msg, line) => issues.push({ line: i + 1, msg, ctx: line.trim() });
+  const rawLines = raw.split('\n');
+  const lines = strip(rawLines);
+  // ctx is the original (unstripped) line so output is readable; the third
+  // argument some rules still pass is ignored.
+  const add = (i, msg) => issues.push({ line: i + 1, msg, ctx: (rawLines[i] ?? '').trim() });
   if (frontmatterLang(raw) === 'en') checkEnglish(lines, add);
-  else checkChinese(lines, add, issues);
+  else checkChinese(lines, add);
   return issues;
 }
 
@@ -114,7 +130,7 @@ function checkEnglish(lines, add) {
 }
 
 // Simplified-Chinese typography rules (GB/T 15834).
-function checkChinese(lines, add, issues) {
+function checkChinese(lines, add) {
   lines.forEach((line, i) => {
     for (let c = 0; c < line.length; c++) {
       const ch = line[c];
@@ -203,7 +219,7 @@ function checkChinese(lines, add, issues) {
     }
   });
   for (const open of stack)
-    issues.push({ line: open.line, msg: `unclosed ${open.ch}`, ctx: lines[open.line - 1].trim() });
+    add(open.line - 1, `unclosed ${open.ch}`);
 }
 
 let total = 0;
