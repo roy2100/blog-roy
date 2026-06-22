@@ -250,3 +250,32 @@ article > time {
   border: none;
   border-top: 1px solid var(--color-border);
 }
+
+/* Tables: block + overflow lets wide numeric tables scroll on narrow screens. */
+.prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.6rem 0;
+  border-collapse: collapse;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.prose th,
+.prose td {
+  padding: 0.5rem 0.85rem;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose thead th {
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
