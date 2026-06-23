@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stamp `updated: <today>` onto staged blog posts. Enable once with:
+#   git config core.hooksPath .githooks
+exec node scripts/stamp-updated.mjs

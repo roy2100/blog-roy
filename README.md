@@ -38,6 +38,12 @@ draft: false           # 可选，true 时不会发布
 
 文件名即文章 slug，访问路径为 `/blog/<文件名>/`。
 
+`updated` 字段无需手动维护：`.githooks/pre-commit` 会在提交时给暂存的
+`src/content/blog/*.md` 自动写入当天日期（仅当晚于 `date`）。该 hook 在
+`npm install` 时通过 `prepare` 脚本启用（`git config core.hooksPath .githooks`）；
+如需对历史文章按 git 提交时间批量回填，运行 `npm run backfill:updated`
+（加 `-- --dry-run` 预览）。
+
 ## 排版检查
 
 `npm run check` 在类型检查后会运行 `scripts/check-typography.mjs`，按文章的

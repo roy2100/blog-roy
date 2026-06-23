@@ -12,6 +12,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { withUpdated } from './lib/updated-frontmatter.mjs';
 
 const ROOT = 'src/content/blog';
 const DRY_RUN = process.argv.includes('--dry-run');
@@ -36,32 +37,11 @@ function lastCommitDate(file) {
   return out || null;
 }
 
-/** Split a YYYY-MM-DD prefix out of a frontmatter date value. */
-function toYMD(value) {
-  const m = value.trim().replace(/^['"]|['"]$/g, '').match(/^\d{4}-\d{2}-\d{2}/);
-  return m ? m[0] : null;
-}
-
 let changed = 0;
 let skipped = 0;
 
 for (const file of listMarkdown(ROOT)) {
   const raw = readFileSync(file, 'utf8');
-  const fm = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!fm) {
-    console.warn(`skip (no frontmatter): ${file}`);
-    skipped++;
-    continue;
-  }
-
-  const dateLine = fm[1].match(/^date:\s*(.+)$/m);
-  if (!dateLine) {
-    console.warn(`skip (no date): ${file}`);
-    skipped++;
-    continue;
-  }
-  const date = toYMD(dateLine[1]);
-
   const updated = lastCommitDate(file);
   if (!updated) {
     console.warn(`skip (no git history): ${file}`);
@@ -69,32 +49,17 @@ for (const file of listMarkdown(ROOT)) {
     continue;
   }
 
-  // Only meaningful when strictly later than publication (YYYY-MM-DD sorts lexically).
-  if (!date || updated <= date) {
+  const next = withUpdated(raw, updated);
+  if (!next) {
     skipped++;
     continue;
   }
 
-  const block = fm[1];
-  let newBlock;
-  if (/^updated:\s*.+$/m.test(block)) {
-    newBlock = block.replace(/^updated:\s*.+$/m, `updated: ${updated}`);
-  } else {
-    // Insert directly after the date line.
-    newBlock = block.replace(/^(date:\s*.+)$/m, `$1\nupdated: ${updated}`);
-  }
-
-  if (newBlock === block) {
-    skipped++;
-    continue;
-  }
-
-  const next = raw.replace(block, newBlock);
   if (DRY_RUN) {
-    console.log(`would set updated: ${updated}  (date: ${date})  ${file}`);
+    console.log(`would set updated: ${updated}  ${file}`);
   } else {
     writeFileSync(file, next);
-    console.log(`set updated: ${updated}  (date: ${date})  ${file}`);
+    console.log(`set updated: ${updated}  ${file}`);
   }
   changed++;
 }
