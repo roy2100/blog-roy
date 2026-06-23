@@ -1,6 +1,6 @@
 # blog-roy
 
-极简个人博客 · [Astro](https://astro.build) + Cloudflare Pages。技术方案见 [`plan.md`](./plan.md)，
+极简个人博客 · [Astro](https://astro.build) + Cloudflare Pages。
 本次 MVP 的执行记录见 [`docs/plan-mvp.md`](./docs/plan-mvp.md)。
 
 ## 本地开发
@@ -23,7 +23,7 @@ npm run dev      # http://localhost:4321
 
 ## 写文章
 
-在 `src/content/blog/` 新建 `.md` 或 `.mdx` 文件，frontmatter 字段：
+在 `src/content/blog/` 新建 `.md` 文件（仅支持 Markdown，未启用 MDX），frontmatter 字段：
 
 ```yaml
 ---

@@ -172,10 +172,9 @@ article h1 {
   margin: 0 0 0.5rem;
 }
 
-article > time {
-  color: var(--color-muted);
+article > .post-meta {
+  margin: 0;
   font-size: 0.9rem;
-  font-variant-numeric: tabular-nums;
 }
 
 .prose {

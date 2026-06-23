@@ -7,6 +7,9 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
+    // Optional last-updated date. Shown on the post page when present and
+    // newer than `date`; falls back to `date` for sorting/RSS.
+    updated: z.coerce.date().optional(),
     tags: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
     description: z.string().optional(),

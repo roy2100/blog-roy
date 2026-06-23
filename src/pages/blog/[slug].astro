@@ -19,12 +19,23 @@ const dateFmt = new Intl.DateTimeFormat('zh-CN', {
   month: '2-digit',
   day: '2-digit',
 });
+
+const { date, updated } = post.data;
+// Only surface an updated time when it is genuinely later than publication.
+const showUpdated = updated && updated.valueOf() > date.valueOf();
 ---
 
 <Base title={post.data.title} description={post.data.description} lang={post.data.lang}>
   <article>
     <h1>{post.data.title}</h1>
-    <time datetime={post.data.date.toISOString()}>{dateFmt.format(post.data.date)}</time>
+    <p class="post-meta">
+      <time datetime={date.toISOString()}>{dateFmt.format(date)}</time>
+      {showUpdated && (
+        <span class="post-updated">
+          · 更新于 <time datetime={updated.toISOString()}>{dateFmt.format(updated)}</time>
+        </span>
+      )}
+    </p>
     <div class="prose">
       <Content />
     </div>
