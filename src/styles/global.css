@@ -1,7 +1,11 @@
 :root {
   /* Font system shared with ../rss-reader */
   --font-ui: 'DM Sans', -apple-system, sans-serif;
-  --font-serif: 'Noto Serif SC', 'Georgia', serif;
+  /* Letters render with Noto Serif SC (from the Google Fonts CDN). The curly
+     quotes/apostrophes, which Noto Serif SC draws full-width (a gap in English),
+     come instead from 'NotoPunct' — a ~2KB self-hosted subset of Noto Serif CJK
+     SC with that font's OWN proportional-width punctuation glyphs baked in. */
+  --font-serif: 'NotoPunct', 'Noto Serif SC', 'Georgia', serif;
   --font-mono: 'SF Mono', 'Fira Mono', ui-monospace, monospace;
 
   /* Color palette adopted from ../rss-reader (warm stone + teal accent). */
@@ -15,6 +19,33 @@
 
   --max-width: 700px;
   --spacing: 1.6rem;
+}
+
+/* Self-hosted subset: only the curly quotes/apostrophes (U+2018–U+201D) and
+   ellipsis (U+2026), pre-mapped to Noto Serif CJK SC's proportional glyphs.
+   One subset per used weight (400 body, 500/600 headings) so punctuation
+   matches the surrounding text weight without synthetic bolding. En/em dashes
+   are already proportional in Noto, so they stay with the base Noto Serif SC. */
+@font-face {
+  font-family: 'NotoPunct';
+  src: url('/fonts/noto-serif-sc-punct-400.woff2') format('woff2');
+  unicode-range: U+2018-201D, U+2026;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NotoPunct';
+  src: url('/fonts/noto-serif-sc-punct-500.woff2') format('woff2');
+  unicode-range: U+2018-201D, U+2026;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NotoPunct';
+  src: url('/fonts/noto-serif-sc-punct-600.woff2') format('woff2');
+  unicode-range: U+2018-201D, U+2026;
+  font-weight: 600;
+  font-display: swap;
 }
 
 /* rss-reader is light-only; this dark variant keeps the same stone/teal family. */
