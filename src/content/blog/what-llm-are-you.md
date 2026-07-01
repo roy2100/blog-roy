@@ -1,6 +1,7 @@
 ---
 title: 你是什么模型？
-date: 2026-06-30 23:00:00
+date: 2026-06-30T23:00:00+08:00
+updated: 2026-07-01
 lang: zh
 tags: [随笔]
 description: 你是什么模型？

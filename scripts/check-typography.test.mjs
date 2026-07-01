@@ -98,6 +98,15 @@ test('language dispatch: same text, different rules', () => {
   assert.ok(has(en('a,b'), 'missing space after ","'));
 });
 
+test('frontmatter: datetime without offset is flagged, date-only and offset are OK', () => {
+  const post = (fm) => `---\ntitle: t\n${fm}\n---\n\n正文很干净。`;
+  assert.ok(has(post('date: 2026-06-30T22:00:00'), 'no timezone offset'));
+  assert.ok(has(post('date: 2026-06-30\nupdated: 2026-06-30T09:00'), 'no timezone offset'));
+  clean(post('date: 2026-06-30T22:00:00+08:00'));
+  clean(post('date: 2026-06-30T22:00:00Z'));
+  clean(post('date: 2026-06-30')); // date-only is unambiguous
+});
+
 test('line numbers point at the offending line', () => {
   const issues = checkContent(zh('第一行没问题。\n第二行有问题,这里。'));
   assert.equal(issues.length, 1);

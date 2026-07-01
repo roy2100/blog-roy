@@ -1,7 +1,7 @@
 ---
 title: Custom Metrics On Bitcoin Treasury Company
-date: 2025-06-05
-updated: 2026-06-22
+date: 2025-06-05T00:00:00+08:00
+updated: 2026-07-01
 lang: en
 tags: [投资]
 description: Two metrics I invented to measure bitcoin treasury companies — the mNAV to BTC Yield Ratio and the Vitality Index.

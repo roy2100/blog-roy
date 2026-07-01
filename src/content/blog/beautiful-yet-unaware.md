@@ -1,7 +1,7 @@
 ---
 title: '"I Like It When You Sleep, For You Are So Beautiful Yet So Unaware Of It"'
-date: 2020-08-23
-updated: 2026-06-22
+date: 2020-08-23T00:00:00+08:00
+updated: 2026-07-01
 lang: zh
 tags: [随笔, 音乐]
 description: 标题取自 The 1975 的同名专辑——关于美、自知，以及把自己物化的一点思考。

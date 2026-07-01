@@ -20,6 +20,10 @@
 // (`...`) are blanked before checking, so config snippets and YAML arrays are
 // not flagged. Line/column numbers are preserved.
 //
+// Independently of language, a frontmatter date guard flags any `date`/`updated`
+// value that has a time component but no explicit timezone offset (which YAML
+// would otherwise read as UTC and drift by 8h) — see checkFrontmatterDates.
+//
 // Usage: node scripts/check-typography.mjs
 // Exits 1 if any issue is found.
 
@@ -99,6 +103,7 @@ export function checkContent(raw) {
   // ctx is the original (unstripped) line so output is readable; the third
   // argument some rules still pass is ignored.
   const add = (i, msg) => issues.push({ line: i + 1, msg, ctx: (rawLines[i] ?? '').trim() });
+  checkFrontmatterDates(rawLines, add);
   if (frontmatterLang(raw) === 'en') checkEnglish(lines, add);
   else checkChinese(lines, add);
   return issues;
@@ -106,6 +111,22 @@ export function checkContent(raw) {
 
 function checkFile(path) {
   return checkContent(readFileSync(path, 'utf8'));
+}
+
+// Frontmatter date guard: a `date`/`updated` value with a time component must
+// carry an explicit timezone offset (+hh:mm / -hh:mm / Z). Without one, YAML 1.1
+// parses it as UTC, silently drifting the intended local (Asia/Shanghai) time by
+// 8h. Date-only values (no `T`) are unambiguous and allowed. Language-agnostic.
+function checkFrontmatterDates(rawLines, add) {
+  if (!/^---\s*$/.test(rawLines[0] ?? '')) return;
+  for (let i = 1; i < rawLines.length; i++) {
+    if (/^---\s*$/.test(rawLines[i])) break; // end of frontmatter block
+    const m = rawLines[i].match(/^(date|updated):\s*(.+?)\s*$/);
+    if (!m) continue;
+    const v = m[2].replace(/^["']|["']$/g, '');
+    if (v.includes('T') && !/([+-]\d{2}:?\d{2}|Z)$/.test(v))
+      add(i, `frontmatter "${m[1]}" has a time but no timezone offset — append "+08:00"`);
+  }
 }
 
 // English typography rules, applied to posts with `lang: en`.
