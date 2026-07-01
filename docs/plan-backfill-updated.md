@@ -48,3 +48,10 @@ Low — single mechanical script over a flat content directory.
   after the `date:` line. 0 skipped.
 - `npm run check` passes (10 files, 0 errors; 17 tests pass).
 - No deviations from the plan.
+
+## Superseded (2026-07-01)
+The auto-stamping subsystem this plan describes — the `.githooks/pre-commit`
+hook, `scripts/stamp-updated.mjs`, `scripts/backfill-updated.mjs`, and
+`scripts/lib/updated-frontmatter.mjs` — has been removed. `updated` is now
+maintained by hand. See docs/plan-date-tz.md for the timezone-explicit date
+convention that replaced it.

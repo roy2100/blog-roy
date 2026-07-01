@@ -1,7 +1,6 @@
 ---
 title: 不受限制的思考
 date: 2026-06-30T22:00:00+08:00
-updated: 2026-07-01
 lang: zh
 tags: [随笔]
 description: 不受限制的思考。

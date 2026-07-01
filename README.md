@@ -28,7 +28,8 @@ npm run dev      # http://localhost:4321
 ```yaml
 ---
 title: 标题
-date: 2026-06-22
+date: 2026-06-22T00:00:00+08:00      # 发布时间；带时间须显式写时区偏移
+updated: 2026-06-22T00:00:00+08:00   # 可选，最后更新时间，手动维护
 lang: zh               # 可选，zh（默认）或 en，决定 <html lang> 与排版规则
 tags: [标签1, 标签2]   # 可选
 description: 摘要      # 可选，用于列表与 RSS
@@ -38,11 +39,10 @@ draft: false           # 可选，true 时不会发布
 
 文件名即文章 slug，访问路径为 `/blog/<文件名>/`。
 
-`updated` 字段无需手动维护：`.githooks/pre-commit` 会在提交时给暂存的
-`src/content/blog/*.md` 自动写入当天日期（仅当晚于 `date`）。该 hook 在
-`npm install` 时通过 `prepare` 脚本启用（`git config core.hooksPath .githooks`）；
-如需对历史文章按 git 提交时间批量回填，运行 `npm run backfill:updated`
-（加 `-- --dry-run` 预览）。
+`date`／`updated` 手动维护。日期可只写到天（`2026-06-22`，按当日 00:00
+Asia/Shanghai 显示）；若要写到具体时刻，**必须带显式时区偏移** `+08:00`，
+否则 YAML 会按 UTC 解析、静默漂 8 小时。`npm run check` 会拦截「有时间但缺
+时区」的 `date`／`updated`。
 
 ## 排版检查
 

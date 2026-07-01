@@ -1,7 +1,7 @@
 ---
 title: Full-time Investor
 date: 2025-06-04T00:00:00+08:00
-updated: 2026-07-01
+updated: 2026-06-22T00:00:00+08:00
 lang: en
 tags: [投资]
 description: Why investing is a full-time job, not a side hustle — and how to approach it like training your own model.
