@@ -20,9 +20,9 @@
 // (`...`) are blanked before checking, so config snippets and YAML arrays are
 // not flagged. Line/column numbers are preserved.
 //
-// Independently of language, a frontmatter date guard flags any `date`/`updated`
-// value that has a time component but no explicit timezone offset (which YAML
-// would otherwise read as UTC and drift by 8h) — see checkFrontmatterDates.
+// Independently of language, a frontmatter date guard requires every
+// `date`/`updated` to be a full datetime with an explicit timezone offset
+// (e.g. 2026-06-22T00:00:00+08:00) — see checkFrontmatterDates.
 //
 // Usage: node scripts/check-typography.mjs
 // Exits 1 if any issue is found.
@@ -113,10 +113,12 @@ function checkFile(path) {
   return checkContent(readFileSync(path, 'utf8'));
 }
 
-// Frontmatter date guard: a `date`/`updated` value with a time component must
-// carry an explicit timezone offset (+hh:mm / -hh:mm / Z). Without one, YAML 1.1
-// parses it as UTC, silently drifting the intended local (Asia/Shanghai) time by
-// 8h. Date-only values (no `T`) are unambiguous and allowed. Language-agnostic.
+// Frontmatter date guard: every `date`/`updated` must be a full datetime with an
+// explicit timezone offset — `YYYY-MM-DDThh:mm[:ss](+hh:mm | Z)`. One uniform
+// form, no date-only shorthand: a bare date or an offset-less time both let
+// YAML 1.1 pick the zone implicitly (UTC), drifting the intended Asia/Shanghai
+// time by 8h. Language-agnostic.
+const FULL_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:?\d{2}|Z)$/;
 function checkFrontmatterDates(rawLines, add) {
   if (!/^---\s*$/.test(rawLines[0] ?? '')) return;
   for (let i = 1; i < rawLines.length; i++) {
@@ -124,8 +126,8 @@ function checkFrontmatterDates(rawLines, add) {
     const m = rawLines[i].match(/^(date|updated):\s*(.+?)\s*$/);
     if (!m) continue;
     const v = m[2].replace(/^["']|["']$/g, '');
-    if (v.includes('T') && !/([+-]\d{2}:?\d{2}|Z)$/.test(v))
-      add(i, `frontmatter "${m[1]}" has a time but no timezone offset — append "+08:00"`);
+    if (!FULL_DATETIME.test(v))
+      add(i, `frontmatter "${m[1]}" must be a full datetime with timezone offset, e.g. 2026-06-22T00:00:00+08:00`);
   }
 }
 

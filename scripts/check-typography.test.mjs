@@ -3,9 +3,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { checkContent } from './check-typography.mjs';
 
-// Wrap a body in minimal frontmatter for each language.
-const zh = (body) => `---\ntitle: t\ndate: 2026-06-22\n---\n\n${body}\n`;
-const en = (body) => `---\ntitle: t\ndate: 2026-06-22\nlang: en\n---\n\n${body}\n`;
+// Wrap a body in minimal frontmatter for each language. Dates must be full
+// datetimes with a timezone offset (enforced by the frontmatter date guard).
+const zh = (body) => `---\ntitle: t\ndate: 2026-06-22T00:00:00+08:00\n---\n\n${body}\n`;
+const en = (body) => `---\ntitle: t\ndate: 2026-06-22T00:00:00+08:00\nlang: en\n---\n\n${body}\n`;
 
 const msgs = (raw) => checkContent(raw).map((x) => x.msg);
 const has = (raw, needle) => msgs(raw).some((m) => m.includes(needle));
@@ -66,7 +67,7 @@ test('Chinese: quote nesting and balance', () => {
 
 test('Chinese: frontmatter and code are exempt', () => {
   // CJK in YAML arrays must not be read as prose.
-  clean('---\ntitle: t\ndate: 2026-06-22\ntags: [随笔, 程序员]\n---\n\n正文很干净。');
+  clean('---\ntitle: t\ndate: 2026-06-22T00:00:00+08:00\ntags: [随笔, 程序员]\n---\n\n正文很干净。');
   // Inline code between Han characters must not trip the spacing rule.
   clean(zh('用 `Java` 写，再用 `0` 验证。'));
 });
@@ -98,13 +99,14 @@ test('language dispatch: same text, different rules', () => {
   assert.ok(has(en('a,b'), 'missing space after ","'));
 });
 
-test('frontmatter: datetime without offset is flagged, date-only and offset are OK', () => {
+test('frontmatter: dates must be a full datetime with a timezone offset', () => {
   const post = (fm) => `---\ntitle: t\n${fm}\n---\n\n正文很干净。`;
-  assert.ok(has(post('date: 2026-06-30T22:00:00'), 'no timezone offset'));
-  assert.ok(has(post('date: 2026-06-30\nupdated: 2026-06-30T09:00'), 'no timezone offset'));
+  assert.ok(has(post('date: 2026-06-30'), 'full datetime')); // date-only rejected
+  assert.ok(has(post('date: 2026-06-30T22:00:00'), 'full datetime')); // no offset
+  assert.ok(has(post('date: 2026-06-30\nupdated: 2026-06-30T09:00'), 'full datetime'));
   clean(post('date: 2026-06-30T22:00:00+08:00'));
+  clean(post('date: 2026-06-30T22:00+08:00')); // seconds optional
   clean(post('date: 2026-06-30T22:00:00Z'));
-  clean(post('date: 2026-06-30')); // date-only is unambiguous
 });
 
 test('line numbers point at the offending line', () => {

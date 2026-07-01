@@ -39,10 +39,10 @@ draft: false           # 可选，true 时不会发布
 
 文件名即文章 slug，访问路径为 `/blog/<文件名>/`。
 
-`date`／`updated` 手动维护。日期可只写到天（`2026-06-22`，按当日 00:00
-Asia/Shanghai 显示）；若要写到具体时刻，**必须带显式时区偏移** `+08:00`，
-否则 YAML 会按 UTC 解析、静默漂 8 小时。`npm run check` 会拦截「有时间但缺
-时区」的 `date`／`updated`。
+`date`／`updated` 手动维护，统一为完整的「日期时间 + 时区偏移」一种写法，
+例如 `2026-06-22T00:00:00+08:00`（只到天则写 `T00:00:00+08:00`）。不允许只写
+日期或省略偏移——否则 YAML 会按 UTC 解析、静默漂 8 小时。`npm run check` 会拦截
+任何不是完整 datetime + 时区的 `date`／`updated`。页面按 Asia/Shanghai 显示。
 
 ## 排版检查
 
